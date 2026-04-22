@@ -9,8 +9,8 @@ metadata = MetaData(naming_convention={
 db = SQLAlchemy(metadata=metadata)
 
 # TODO: add association table
-sessionspeaker = db.Table(
-    'sessionspeaker',
+session_speakers = db.Table(
+    'session_speakers',
     db.Column('session_id', db.Integer, db.ForeignKey('sessions.id'), primary_key=True),
     db.Column('speaker_id', db.Integer, db.ForeignKey('speakers.id'), primary_key=True)
 )
@@ -37,7 +37,7 @@ class Session(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
 
     event = db.relationship('Event', back_populates='sessions')
-    speakers = db.relationship('Speaker', secondary=sessionspeaker, back_populates='sessions')
+    speakers = db.relationship('Speaker', secondary=session_speakers, back_populates='sessions')
 
     # speakers = association_proxy('speakers', 'sessions',)
 
@@ -51,7 +51,7 @@ class Speaker(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
 
-    sessions = db.relationship('Session', secondary=sessionspeaker, back_populates='speakers')
+    sessions = db.relationship('Session', secondary=session_speakers, back_populates='speakers')
     bio = db.relationship('Bio', uselist=False, back_populates='speaker')
 
     # sessions = association_proxy('speakers', 'sessions',)
