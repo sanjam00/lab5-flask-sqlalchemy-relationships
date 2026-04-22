@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, make_response
 from flask_migrate import Migrate
 
 from models import db, Event, Session, Speaker, Bio
@@ -18,13 +18,36 @@ db.init_app(app)
 
 @app.route('/events')
 def get_events():
-    pass
+    events = Event.query.all()
+
+    event_list = [
+        {
+            'id': event.id,
+            'name': event.name,
+            'location': event.location
+        }
+        for event in events
+    ]
+    return event_list, 200
 
 
 @app.route('/events/<int:id>/sessions')
 def get_event_sessions(id):
-    pass
+    event = Event.query.get(id)
 
+    if not event:
+        return {"error": "Event not found"}, 404
+    
+    sessions_list =[
+        {
+            'id': session.id,
+            'title': session.title,
+            'start_time': session.start_time.isoformat() if session.start_time else None
+        }
+        for session in event.sessions
+    ]
+
+    return sessions_list, 200
 
 @app.route('/speakers')
 def get_speakers():
