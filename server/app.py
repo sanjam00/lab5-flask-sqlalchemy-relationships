@@ -51,13 +51,36 @@ def get_event_sessions(id):
 
 @app.route('/speakers')
 def get_speakers():
-    pass
+    speakers = Speaker.query.all()
+
+    speaker_list = [
+        {
+            'id': speaker.id,
+            'name': speaker.name
+        }
+        for speaker in speakers
+    ]
+    return speaker_list, 200
 
 
 @app.route('/speakers/<int:id>')
 def get_speaker(id):
-    pass
+    speaker = Speaker.query.filter_by(id=id).first()
 
+    if speaker:
+        body = {
+            'id': speaker.id,
+            'name': speaker.name,
+            'bio_text': speaker.bio.bio_text if speaker.bio else "No bio available"
+        }
+        status = 200
+    else:
+        body = {
+            "error": "Speaker not found"
+        }
+        status = 404
+
+    return body, status
 
 @app.route('/sessions/<int:id>/speakers')
 def get_session_speakers(id):
