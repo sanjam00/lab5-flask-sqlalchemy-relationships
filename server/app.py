@@ -84,7 +84,21 @@ def get_speaker(id):
 
 @app.route('/sessions/<int:id>/speakers')
 def get_session_speakers(id):
-    pass
+    session = Session.query.get(id)
+
+    if not session:
+        return {"error": "Session not found"}, 404
+    
+    speakers_list =[
+        {
+            'id': speaker.id,
+            'name': speaker.name,
+            'bio_text': speaker.bio.bio_text if speaker.bio else "No bio available"
+        }
+        for speaker in session.speakers
+    ]
+
+    return speakers_list, 200
 
 
 if __name__ == '__main__':
